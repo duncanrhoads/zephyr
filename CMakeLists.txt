@@ -694,12 +694,16 @@ if(ZEPHYR_GIT_INDEX)
   set(git_dependency ${ZEPHYR_GIT_INDEX})
 endif()
 
+include("cmake/modules/git.cmake")
+git_describe(${APP_DIR} APP_MANIFEST_VERSION)
+
 add_custom_command(
   OUTPUT ${PROJECT_BINARY_DIR}/include/generated/zephyr/version.h
   COMMAND ${CMAKE_COMMAND} -DZEPHYR_BASE=${ZEPHYR_BASE}
     -DOUT_FILE=${PROJECT_BINARY_DIR}/include/generated/zephyr/version.h
     -DVERSION_TYPE=KERNEL
     -DVERSION_FILE=${ZEPHYR_BASE}/VERSION
+    -DAPP_MANIFEST_VERSION=${APP_MANIFEST_VERSION}
     -DKERNEL_VERSION_CUSTOMIZATION="$<TARGET_PROPERTY:version_h,KERNEL_VERSION_CUSTOMIZATION>"
     ${build_version_argument}
     -P ${ZEPHYR_BASE}/cmake/gen_version_h.cmake
@@ -721,6 +725,7 @@ if(EXISTS ${APPLICATION_SOURCE_DIR}/VERSION)
       -DOUT_FILE=${PROJECT_BINARY_DIR}/include/generated/zephyr/app_version.h
       -DVERSION_TYPE=APP
       -DVERSION_FILE=${APPLICATION_SOURCE_DIR}/VERSION
+      -DAPP_MANIFEST_VERSION=${APP_MANIFEST_VERSION}
       -DAPP_VERSION_CUSTOMIZATION="$<TARGET_PROPERTY:app_version_h,APP_VERSION_CUSTOMIZATION>"
       ${build_version_argument}
       -P ${ZEPHYR_BASE}/cmake/gen_version_h.cmake
