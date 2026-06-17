@@ -18,6 +18,17 @@ if(NOT DEFINED ${BUILD_VERSION_NAME})
   git_describe(${work_dir} ${BUILD_VERSION_NAME})
 endif()
 
+execute_process(
+  COMMAND ${WEST_PYTHON} -m west manifest --path
+  OUTPUT_VARIABLE MANIFEST_PATH
+  ERROR_VARIABLE WEST_ERROR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+if(MANIFEST_PATH AND NOT WEST_ERROR)
+  git_describe("${MANIFEST_PATH}" MANIFEST_GIT_DESC)
+endif()
+
 include(${ZEPHYR_BASE}/cmake/modules/version.cmake)
 file(READ ${ZEPHYR_BASE}/version.h.in version_content)
 string(CONFIGURE "${version_content}" version_content)
