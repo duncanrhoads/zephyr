@@ -12,18 +12,17 @@ find_package(Git QUIET)
 # from DIR.
 #
 function(git_describe ARG OUTPUT)
-
-if(NOT IS_DIRECTORY "${ARG}")
-    get_filename_component(Parent_DIR "${ARG}" DIRECTORY)
+  if(NOT IS_DIRECTORY "${ARG}")
+    cmake_path(GET ARG PARENT_PATH Parent_DIR)
     if(NOT IS_DIRECTORY "${Parent_DIR}")
       message(FATAL_ERROR "neither ${ARG} nor its parent are a valid directory!?")
     endif()
     set(DIR "${Parent_DIR}")
-else()
+  else()
     set(DIR "${ARG}")
-endif()
+  endif()
 
-if(GIT_FOUND)
+  if(GIT_FOUND)
     execute_process(
       COMMAND ${GIT_EXECUTABLE} describe --abbrev=12 --always
       WORKING_DIRECTORY                ${DIR}
